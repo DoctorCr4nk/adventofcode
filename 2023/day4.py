@@ -20,11 +20,6 @@ def calculate_cards(card_data: dict) -> int:
         for win in range(1, won_cards + 1):
             card_data[card + win]['count'] += card_data[card]['count']
             sum_won_cards += card_data[card]['count']
-
-    test = list()
-    for card in card_data.keys():
-        test.append(card_data[card]['count'])
-    print(utils.calc_sum(test))
     return sum_won_cards
 
 def calculate_points(card_data: dict) -> int:
