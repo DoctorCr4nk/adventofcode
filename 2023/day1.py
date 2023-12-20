@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3.6
 ## Description  Advent of Code 2023
 ## Link:        https://adventofcode.com/2023
 
@@ -40,10 +40,10 @@ def get_numbers(input_data: list) -> list:
         numbers.append(first_number + last_number)
     return numbers
 
-input_part_e1 = utils.read_file('input_data/day1.example1.txt')
-input_part_e2 = utils.read_file('input_data/day1.example2.txt')
+input_example1 = utils.read_file('input_data/day1.example1.txt')
+input_example2 = utils.read_file('input_data/day1.example2.txt')
 input_data = utils.read_file('input_data/day1.txt')
-utils.print_results(str(utils.calc_sum(get_numbers(input_part_e1))),
+utils.print_results(str(utils.calc_sum(get_numbers(input_example1))),
                     str(utils.calc_sum(get_numbers(input_data))),
-                    str(utils.calc_sum(get_numbers(convert_text(input_part_e2)))),
+                    str(utils.calc_sum(get_numbers(convert_text(input_example2)))),
                     str(utils.calc_sum(get_numbers(convert_text(input_data)))))
