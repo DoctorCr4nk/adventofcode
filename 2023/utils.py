@@ -16,3 +16,9 @@ def calc_sum(numbers: list) -> int:
 
 def get_id(line: str) -> str:
     return int(line.split(':')[0].split(' ')[-1])
+
+def print_results(example1: str, result1: str, example2: str, result2: str):
+    print('Result Example Part 1: ' + example1)
+    print('Result Part 1:         ' + result1)
+    print('Result Example Part 2: ' + example2)
+    print('Result Part 2:         ' + result2)
