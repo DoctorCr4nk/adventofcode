@@ -2,7 +2,8 @@
 ## Description  Advent of Code
 ## Link:        https://adventofcode.com/2023
 
-from alive_progress import alive_bar
+from queue import Queue
+import threading
 import time
 import utils
 
@@ -21,7 +22,7 @@ def generate_translation_map(map_type: str) -> list:
             translation_map.append([source_start, source_end, diff])
     return translation_map
 
-def get_lowest_location(seed_ids: list) -> int:
+def get_lowest_location(seed_ids: list, locations: Queue = Queue()) -> int:
     location = int()
     seed_counter = int()
     for seed_id in seed_ids:
@@ -32,23 +33,25 @@ def get_lowest_location(seed_ids: list) -> int:
                 location = dest_value
             source_value = dest_value
         seed_counter += 1
+    locations.put(location)
     return location
 
 def get_lowest_location2(seed_id_ranges: list) -> int:
-    location = int()
-    seed_counter = int()
+    lowest_location = int()
+    locations = Queue()
+    threads = list()
     for seed_ids in seed_id_ranges:
-        with alive_bar(len(seed_ids)) as bar:
-            for seed_id in seed_ids:
-                source_value = seed_id
-                for translation_type in ['soil', 'fertilizer', 'water', 'light', 'temperature', 'humidity', 'location']:
-                    dest_value = translate(translation_type, source_value)
-                    if translation_type == 'location' and (location == 0 or location > dest_value):
-                        location = dest_value
-                    source_value = dest_value
-                seed_counter += 1
-                bar()
-    return location
+        thread = threading.Thread(target=get_lowest_location, args=(seed_ids, locations,))
+        threads.append(thread)
+        thread.start()
+
+    for thread in threads:
+        thread.join()
+    while not locations.empty():
+        location = locations.get()
+        if lowest_location == 0 or lowest_location > location:
+            lowest_location = location
+    return lowest_location
 
 def get_seed_ids() -> list:
     seed_ids = list()
@@ -66,7 +69,6 @@ def get_seed_id_ranges() -> list:
         end_seed =   int(seed_row[seed_counter]) + int(seed_row[seed_counter+1]) - 1
         seed_id_ranges.append(range(start_seed, end_seed))
         seed_counter += 2
-    print(seed_id_ranges)
     return seed_id_ranges
 
 def translate(map_type: str, value: int) -> int:
