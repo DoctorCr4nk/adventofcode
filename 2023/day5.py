@@ -2,8 +2,6 @@
 ## Description  Advent of Code
 ## Link:        https://adventofcode.com/2023
 
-from alive_progress import alive_bar
-import time
 import utils
 
 def get_seed_ids1() -> list:
@@ -20,7 +18,8 @@ def get_seed_ids2() -> list:
     while seed_counter < seed_count:
         start_seed = int(seed_row[seed_counter])
         end_seed =   int(seed_row[seed_counter]) + int(seed_row[seed_counter+1]) - 1
-        for seed_id in range(start_seed, end_seed): seed_ids.append(seed_id)
+        for seed_id in range(start_seed, end_seed):
+            seed_ids.append(seed_id)
         seed_counter += 2
     return seed_ids
 
@@ -48,22 +47,16 @@ def translate(map_type: str, value: int) -> int:
     return translated_value
 
 def get_lowest_location(seed_ids: list) -> int:
-
     location = int()
     seed_counter = int()
-    with alive_bar(len(seed_ids)) as bar:
-        for seed_id in seed_ids:
-            #(seed_counter+1, )
-            source_value = seed_id
-            for translation_type in ['soil', 'fertilizer', 'water', 'light', 'temperature', 'humidity', 'location']:
-                #print(end='.')
-                dest_value = translate(translation_type, source_value)
-                if translation_type == 'location' and (location == 0 or location > dest_value):
-                    location = dest_value
-                source_value = dest_value
-            seed_counter += 1
-            #print()
-            bar()
+    for seed_id in seed_ids:
+        source_value = seed_id
+        for translation_type in ['soil', 'fertilizer', 'water', 'light', 'temperature', 'humidity', 'location']:
+            dest_value = translate(translation_type, source_value)
+            if translation_type == 'location' and (location == 0 or location > dest_value):
+                location = dest_value
+            source_value = dest_value
+        seed_counter += 1
     return location
 
 global input_data
@@ -71,5 +64,5 @@ results = list()
 for data_file in ['day5.example.txt', 'day5.txt']:
     input_data = utils.read_file('input_data/' + data_file)
     results.append(get_lowest_location(get_seed_ids1()))
-    results.append(get_lowest_location(get_seed_ids2()))
+    #results.append(get_lowest_location(get_seed_ids2()))
 utils.print_results(results)
