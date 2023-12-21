@@ -4,15 +4,6 @@
 
 import utils
 
-seed_info = {
-    'seedid'        : int(),
-    'fertilizer'    : int(),
-    'water'         : int(),
-    'light'         : int(),
-    'temperature'   : int(),
-    'humidity'      : int(),
-    'location'      : int(), }
-
 def get_seed_ids() -> list:
     seed_ids = list()
     for seed_id in input_data[0].split()[1:]:
@@ -35,27 +26,24 @@ def generate_translation(map: str) -> list:
                 translation[source_start+i] = dest_start+i
     return translation
 
-def translate_seed2soil(seed_id: int) -> int:
-    soild_id = int()
-    return soild_id
-
 global input_data
 results = list()
-for data_file in ['day5.example.txt', 'day5.txt']:
+for data_file in ['day5.example.txt']:
     input_data = utils.read_file('input_data/' + data_file)
-    translation_maps = dict()
     location = int()
-    for translation_type in ['soil', 'fertilizer', 'water', 'light', 'temperature', 'humidity', 'location']:
-        translation_maps[translation_type] = generate_translation(translation_type)
-    for seed_id in get_seed_ids():
-        source_value = seed_id
-        for translation_type in translation_maps:
+    seed_id = int()
+    seeds =  get_seed_ids()
+    for seed in seeds:
+        source_value = seed
+        for translation_type in ['soil', 'fertilizer', 'water', 'light', 'temperature', 'humidity', 'location']:
+            translation_map = generate_translation(translation_type)
             try:
-                dest_value = translation_maps[translation_type][source_value]
+                dest_value = translation_map[source_value]
             except KeyError:
                 dest_value = source_value
             if translation_type == 'location' and (location == 0 or location > dest_value):
                 location = dest_value
             source_value = dest_value
+        seed_id += 1
     results.append(location)
 utils.print_results(results)
