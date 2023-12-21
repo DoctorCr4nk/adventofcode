@@ -1,6 +1,6 @@
 #!/usr/bin/python3.6
 ## Description  Advent of Code
-## Link:        https://adventofcode.com/2023/
+## Link:        https://adventofcode.com/2023
 
 import utils
 
@@ -46,9 +46,9 @@ def format_numbers(card_data_raw: list) -> dict:
             formatted_numbers[card_id]['pulled'].append(number)
     return formatted_numbers
 
-card_data_raw = utils.read_file('day4.txt')
-card_data = format_numbers(card_data_raw)
-part1_result = str(calculate_points(card_data))
-part2_result = str(calculate_cards(card_data))
-print('Part 1: ' + part1_result)
-print('Part 2: ' + part2_result)
+results = list()
+for data_file in ['day4.example.txt', 'day4.txt']:
+    input_data = format_numbers(utils.read_file('input_data/' + data_file))
+    results.append(calculate_points(input_data))
+    results.append(calculate_cards(input_data))
+utils.print_results(results)

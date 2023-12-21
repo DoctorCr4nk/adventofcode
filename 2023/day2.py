@@ -10,7 +10,6 @@ def calculate_power_of_sets(fewest_cubes: dict) -> int:
         result += fewest_cubes[gameid]['red'] * fewest_cubes[gameid]['green'] * fewest_cubes[gameid]['blue']
     return result
 
-
 def get_fewest_cubes(game_info: dict()) -> dict:
     fewest_cubes = dict()
     for gameid in game_info:
@@ -54,13 +53,9 @@ def get_possible_games(game_info: dict()) -> list:
         if is_possible: possible_games.append(gameid)
     return possible_games
 
-input_example = utils.read_file('input_data/day2.example.txt')
-input_data = utils.read_file('input_data/day2.txt')
-result1_e = utils.calc_sum(get_possible_games(get_game_info(input_example)))
-result1 = utils.calc_sum(get_possible_games(get_game_info(input_data)))
-result2_e = calculate_power_of_sets(get_fewest_cubes(get_game_info(input_example)))
-result2 = calculate_power_of_sets(get_fewest_cubes(get_game_info(input_data)))
-utils.print_results(str(result1_e),
-                    str(result1),
-                    str(result2_e),
-                    str(result2))
+results = list()
+for data_file in ['day2.example.txt', 'day2.txt']:
+    input_data = utils.read_file('input_data/' + data_file)
+    results.append(utils.calc_sum(get_possible_games(get_game_info(input_data))))
+    results.append(calculate_power_of_sets(get_fewest_cubes(get_game_info(input_data))))
+utils.print_results(results)

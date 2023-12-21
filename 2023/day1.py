@@ -37,13 +37,15 @@ def get_numbers(input_data: list) -> list:
             if char.isdigit():
                 last_number = char
                 break
-        numbers.append(first_number + last_number)
+        try:
+            numbers.append(int(first_number + last_number))
+        except ValueError:
+            pass
     return numbers
 
-input_example1 = utils.read_file('input_data/day1.example1.txt')
-input_example2 = utils.read_file('input_data/day1.example2.txt')
-input_data = utils.read_file('input_data/day1.txt')
-utils.print_results(str(utils.calc_sum(get_numbers(input_example1))),
-                    str(utils.calc_sum(get_numbers(input_data))),
-                    str(utils.calc_sum(get_numbers(convert_text(input_example2)))),
-                    str(utils.calc_sum(get_numbers(convert_text(input_data)))))
+results = list()
+for data_file in ['day1.example1.txt','day1.example2.txt', 'day1.txt']:
+    input_data = utils.read_file('input_data/' + data_file)
+    results.append(utils.calc_sum(get_numbers(input_data)))
+    results.append(utils.calc_sum(get_numbers(convert_text(input_data))))
+utils.print_results(results)
