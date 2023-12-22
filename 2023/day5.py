@@ -2,9 +2,7 @@
 ## Description  Advent of Code
 ## Link:        https://adventofcode.com/2023
 
-from queue import Queue
-import threading
-import time
+import multiprocessing
 import utils
 
 def generate_translation_map(map_type: str) -> list:
@@ -22,50 +20,25 @@ def generate_translation_map(map_type: str) -> list:
             translation_map.append([source_start, source_end, diff])
     return translation_map
 
-def get_location(seed_id: int, locationsQ: Queue = Queue()) -> int:
+def get_location(seed_id: int) -> int:
     source_value = seed_id
     for translation_type in ['soil', 'fertilizer', 'water', 'light', 'temperature', 'humidity', 'location']:
         dest_value = translate(translation_type, source_value)
         source_value = dest_value
-    locationsQ.put(dest_value)
     return dest_value
 
-def get_lowest_location(seed_ids: list, lowest_locationQ: Queue = Queue()) -> int:
-    lowest_location = int()
-    locationsQ = Queue()
-    threads = list()
-    for seed_id in seed_ids:
-        thread = threading.Thread(target=get_location, args=(seed_id, locationsQ,))
-        threads.append(thread)
-        thread.start()
-
-    for thread in threads:
-        thread.join()
-
-    while not locationsQ.empty():
-        location = locationsQ.get()
-        if lowest_location == 0 or lowest_location > location:
-            lowest_location = location
-
-    lowest_locationQ.put(lowest_location)
-    return lowest_location
+def get_lowest_location(seed_ids: list) -> int:
+    locations = list()
+    process_pool = multiprocessing.Pool()
+    locations = process_pool.map(get_location, seed_ids)
+    process_pool.close()
+    return min(locations)
 
 def get_lowest_location2(seed_id_ranges: list) -> int:
-    lowest_location = int()
-    lowest_locationQ = Queue()
-    threads = list()
+    lowest_locations = list()
     for seed_ids in seed_id_ranges:
-        thread = threading.Thread(target=get_lowest_location, args=(seed_ids, lowest_locationQ,))
-        threads.append(thread)
-        thread.start()
-
-    for thread in threads:
-        thread.join()
-    while not lowest_locationQ.empty():
-        location = lowest_locationQ.get()
-        if lowest_location == 0 or lowest_location > location:
-            lowest_location = location
-    return lowest_location
+        lowest_locations.append(get_lowest_location(seed_ids))
+    return min(lowest_locations)
 
 def get_seed_ids() -> list:
     seed_ids = list()
@@ -93,10 +66,11 @@ def translate(map_type: str, value: int) -> int:
             translated_value = value - translation[2]
     return translated_value
 
-global input_data
-results = list()
-for data_file in ['day5.example.txt', 'day5.txt']:
-    input_data = utils.read_file('input_data/' + data_file)
-    results.append(get_lowest_location(get_seed_ids()))
-    results.append(get_lowest_location2(get_seed_id_ranges()))
-utils.print_results(results)
+if __name__== '__main__':
+    global input_data
+    results = list()
+    for data_file in ['day5.example.txt', 'day5.txt']:
+        input_data = utils.read_file('input_data/' + data_file)
+        results.append(get_lowest_location(get_seed_ids()))
+        results.append(get_lowest_location2(get_seed_id_ranges()))
+    utils.print_results(results)
