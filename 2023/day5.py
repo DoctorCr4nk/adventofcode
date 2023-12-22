@@ -22,33 +22,47 @@ def generate_translation_map(map_type: str) -> list:
             translation_map.append([source_start, source_end, diff])
     return translation_map
 
-def get_lowest_location(seed_ids: list, locations: Queue = Queue()) -> int:
-    location = int()
-    seed_counter = int()
-    for seed_id in seed_ids:
-        source_value = seed_id
-        for translation_type in ['soil', 'fertilizer', 'water', 'light', 'temperature', 'humidity', 'location']:
-            dest_value = translate(translation_type, source_value)
-            if translation_type == 'location' and (location == 0 or location > dest_value):
-                location = dest_value
-            source_value = dest_value
-        seed_counter += 1
-    locations.put(location)
-    return location
+def get_location(seed_id: int, locationsQ: Queue = Queue()) -> int:
+    source_value = seed_id
+    for translation_type in ['soil', 'fertilizer', 'water', 'light', 'temperature', 'humidity', 'location']:
+        dest_value = translate(translation_type, source_value)
+        source_value = dest_value
+    locationsQ.put(dest_value)
+    return dest_value
 
-def get_lowest_location2(seed_id_ranges: list) -> int:
+def get_lowest_location(seed_ids: list, lowest_locationQ: Queue = Queue()) -> int:
     lowest_location = int()
-    locations = Queue()
+    locationsQ = Queue()
     threads = list()
-    for seed_ids in seed_id_ranges:
-        thread = threading.Thread(target=get_lowest_location, args=(seed_ids, locations,))
+    for seed_id in seed_ids:
+        thread = threading.Thread(target=get_location, args=(seed_id, locationsQ,))
         threads.append(thread)
         thread.start()
 
     for thread in threads:
         thread.join()
-    while not locations.empty():
-        location = locations.get()
+
+    while not locationsQ.empty():
+        location = locationsQ.get()
+        if lowest_location == 0 or lowest_location > location:
+            lowest_location = location
+
+    lowest_locationQ.put(lowest_location)
+    return lowest_location
+
+def get_lowest_location2(seed_id_ranges: list) -> int:
+    lowest_location = int()
+    lowest_locationQ = Queue()
+    threads = list()
+    for seed_ids in seed_id_ranges:
+        thread = threading.Thread(target=get_lowest_location, args=(seed_ids, lowest_locationQ,))
+        threads.append(thread)
+        thread.start()
+
+    for thread in threads:
+        thread.join()
+    while not lowest_locationQ.empty():
+        location = lowest_locationQ.get()
         if lowest_location == 0 or lowest_location > location:
             lowest_location = location
     return lowest_location
