@@ -1,12 +1,15 @@
 #!/bin/bash
 
-year=2023
+year=2024
 
-for day in {4..24}
+for day in {3..25}
 do
-    echo '#!/usr/bin/python3.6
-## Description  Advent of Code
-## Link:        https://adventofcode.com/2023/' > "${year}/day${day}.py"
-    touch "${year}/day${day}.example.txt"
-    touch "${year}/day${day}.txt"
+    aoc_url="https://adventofcode.com/${year}/day/${day}"
+    echo \
+"#!/usr/bin/python3.12
+## Description  Advent of Code ${year}
+## Link:        ${aoc_url}" \
+> "${year}/day${day}.py"
+    touch "${year}/input_data/day${day}.example"
+    touch "${year}/input_data/day${day}.data"
 done
